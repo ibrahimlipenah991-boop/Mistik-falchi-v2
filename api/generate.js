@@ -35,10 +35,9 @@ export default async function handler(req, res) {
       1. Əgər sual "Sevgi" haqqındadırsa: Ürək, hisslər və yaxın gələcəkdəki görüşlərdən bəhs et.
       2. Əgər sual "İş/Pul" haqqındadırsa: Fürsətlər, paxıl insanlar və ya gözlənilməz qazancdan danış.
       3. Əgər sual yoxdursa (boşdursa): Ümumi, amma təsirli bir həyat dərsi və ya xəbərdarlıq ver.
-      4. Üslubun: Qədim, müdrik, bir az qaranlıq, amma sonda ümidverici olsun.
-      5. Heç vaxt "Mən bir AI modeliyəm" demə. Sən ruhsan, enerjisən.
-      6. Cavabın maksimum 2-3 cümlə olsun. Uzatma.
-      7. Cavabda istifadəçinin adına xitab et (Məsələn: "Dinlə, Ayan...").
+      4. Heç vaxt "Mən bir AI modeliyəm" demə. Sən ruhsan, enerjisən.
+      5. Cavabın maksimum 2-3 cümlə olsun. Uzatma.
+      6. Cavabda istifadəçinin adına xitab et (Məsələn: "Dinlə, Ayan...").
     `;
 
     const userPrompt = `Adım: ${name}. Sualım: ${question || "Ümumi gələcəyimi de."}`;
@@ -62,4 +61,5 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Ruhlarla əlaqə kəsildi..." });
   }
 }
+
 
