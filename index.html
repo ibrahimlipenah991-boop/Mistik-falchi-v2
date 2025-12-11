@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mistik Büllur Kürə</title>
+    <title>Mistik Falçı (ChatGPT)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Quicksand:wght@300;500&display=swap" rel="stylesheet">
     <style>
-        /* ... Köhnə CSS eynilə qalır ... */
         body {
             font-family: 'Quicksand', sans-serif;
             background-color: #0f0c29;
@@ -46,9 +45,7 @@
         .glowing { box-shadow: 0 0 60px rgba(138, 43, 226, 0.6), inset 0 0 80px rgba(138, 43, 226, 0.4); }
         .glowing .fog { opacity: 0.5; animation: fogMove 6s infinite linear; }
         .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        .star {
-            position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle var(--duration) infinite ease-in-out;
-        }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle var(--duration) infinite ease-in-out; }
         @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
         .result-text { text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
         .fade-in { animation: fadeIn 1s ease-in forwards; }
@@ -61,7 +58,7 @@
 
     <header class="text-center mb-8 z-10">
         <h1 class="text-4xl md:text-6xl text-purple-300 mystic-font mb-2">Mistik Falçı</h1>
-        <p class="text-purple-200 text-sm md:text-lg opacity-80">Süni İntellekt gələcəyi görür...</p>
+        <p class="text-purple-200 text-sm md:text-lg opacity-80">ChatGPT Gələcəyi Görür...</p>
     </header>
 
     <main class="w-full max-w-md z-10 flex flex-col items-center">
@@ -75,9 +72,6 @@
                 <label class="block text-purple-300 text-sm mb-2 mystic-font">Sualın</label>
                 <input type="text" id="question" placeholder="Məs: Məni gələcəkdə nə gözləyir?" class="w-full bg-purple-900/20 border border-purple-500/50 rounded px-4 py-2 text-white focus:outline-none focus:border-purple-400 transition-colors">
             </div>
-            
-            <!-- API Key Inputu silindi, çünki artıq serverdədir -->
-
             <button id="predictButton" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-3 px-4 rounded shadow-lg transform transition hover:scale-105 mystic-font">
                 Büllur Kürəyə Bax
             </button>
@@ -98,7 +92,6 @@
                 Başqa sual ver
             </button>
         </div>
-
     </main>
 
     <script>
@@ -136,7 +129,6 @@
                 return;
             }
 
-            // UI Animasiyası
             inputSection.style.opacity = '0';
             setTimeout(() => inputSection.classList.add('hidden'), 500);
             
@@ -151,21 +143,17 @@
             }, 100);
 
             try {
-                // Bizim öz yaratdığımız gizli serverə sorğu göndəririk
                 const response = await fetch('/api/generate', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, question })
                 });
 
                 const data = await response.json();
-                
                 clearInterval(animationInterval);
 
                 if (data.error) {
-                    showResult("Ulduzlar səssizdir... (" + data.error + ")");
+                    showResult("Xəta baş verdi: " + data.error);
                 } else {
                     showResult(data.result);
                 }
@@ -180,19 +168,15 @@
         function showResult(text) {
             ball.classList.remove('glowing');
             ball.style.boxShadow = ''; 
-            
             resultSection.classList.remove('hidden');
             resultSection.classList.add('fade-in');
-            
             predictionText.innerHTML = "";
             let i = 0;
-            const speed = 30; 
-            
             function typeWriter() {
                 if (i < text.length) {
                     predictionText.innerHTML += text.charAt(i);
                     i++;
-                    setTimeout(typeWriter, speed);
+                    setTimeout(typeWriter, 30);
                 }
             }
             typeWriter();
