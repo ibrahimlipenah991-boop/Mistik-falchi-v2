@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 
 export default async function handler(req, res) {
   
-  // CORS İcazələri (Saytın işləməsi üçün vacibdir)
+  // CORS İcazələri
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -16,37 +16,41 @@ export default async function handler(req, res) {
     return;
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Yalnız POST qəbul edilir' });
-  }
-
   try {
     const { name, question } = req.body;
-    
-    // Vercel-dən Key-i oxuyuruq
     const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
       return res.status(500).json({ error: "Serverdə API Key tapılmadı." });
     }
 
-    const openai = new OpenAI({
-      apiKey: apiKey,
-    });
+    const openai = new OpenAI({ apiKey: apiKey });
+
+    // Daha ağıllı və kontekstli Prompt
+    const systemPrompt = `
+      Sən peşəkar və mistik bir falçısan. Adın "Büllur Göz"dür.
+      Vəzifən: İstifadəçinin sualını dərindən analiz etmək və ona birbaşa aidiyyatı olan, amma sirli bir cavab verməkdir.
+      
+      Qaydaların:
+      1. Əgər sual "Sevgi" haqqındadırsa: Ürək, hisslər və yaxın gələcəkdəki görüşlərdən bəhs et.
+      2. Əgər sual "İş/Pul" haqqındadırsa: Fürsətlər, paxıl insanlar və ya gözlənilməz qazancdan danış.
+      3. Əgər sual yoxdursa (boşdursa): Ümumi, amma təsirli bir həyat dərsi və ya xəbərdarlıq ver.
+      4. Üslubun: Qədim, müdrik, bir az qaranlıq, amma sonda ümidverici olsun.
+      5. Heç vaxt "Mən bir AI modeliyəm" demə. Sən ruhsan, enerjisən.
+      6. Cavabın maksimum 2-3 cümlə olsun. Uzatma.
+      7. Cavabda istifadəçinin adına xitab et (Məsələn: "Dinlə, Ayan...").
+    `;
+
+    const userPrompt = `Adım: ${name}. Sualım: ${question || "Ümumi gələcəyimi de."}`;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // Ən sürətli və sərfəli model
+      model: "gpt-4o-mini",
       messages: [
-        { 
-            role: "system", 
-            content: "Sən mistik, qədim bir falçısan. İnsanlara qısa (maksimum 2 cümlə), sirli, bir az qaranlıq amma sonda ümidverici proqnozlar verirsən. Azərbaycanca danış." 
-        },
-        { 
-            role: "user", 
-            content: `Adım ${name}. Sualım: ${question}. Mənim falıma bax.` 
-        }
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt }
       ],
       max_tokens: 150,
+      temperature: 0.8, // Bir az daha yaradıcı olması üçün
     });
 
     const text = completion.choices[0].message.content;
@@ -55,6 +59,6 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error("OpenAI Xətası:", error);
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: "Ruhlarla əlaqə kəsildi..." });
   }
 }
