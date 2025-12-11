@@ -1,10 +1,8 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from 'openai';
 
-// Bu kod istifadəçinin brauzerində deyil, Vercel serverində işləyir.
-// Ona görə də burada API Key təhlükəsizdir.
 export default async function handler(req, res) {
   
-  // CORS icazələri (Saytın işləməsi üçün)
+  // CORS İcazələri (Saytın işləməsi üçün vacibdir)
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -19,37 +17,44 @@ export default async function handler(req, res) {
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Yalnız POST sorğusu qəbul edilir' });
+    return res.status(405).json({ error: 'Yalnız POST qəbul edilir' });
   }
 
   try {
     const { name, question } = req.body;
     
-    // API Key Vercel-in "Environment Variables" bölməsindən oxunur
-    const apiKey = process.env.GEMINI_API_KEY;
+    // Vercel-dən Key-i oxuyuruq
+    const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
       return res.status(500).json({ error: "Serverdə API Key tapılmadı." });
     }
 
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const openai = new OpenAI({
+      apiKey: apiKey,
+    });
 
-    const prompt = `Sən mistik, qədim və müdrik bir falçısan.
-    İstifadəçinin adı: ${name}.
-    Sualı: ${question || "Ümumi gələcəyim haqqında nə deyə bilərsən?"}.
-    Bu istifadəçiyə 2-3 cümləlik, sirli, bir az metaforik amma ümidverici bir cavab ver. 
-    Falçı kimi danış.`;
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini", // Ən sürətli və sərfəli model
+      messages: [
+        { 
+            role: "system", 
+            content: "Sən mistik, qədim bir falçısan. İnsanlara qısa (maksimum 2 cümlə), sirli, bir az qaranlıq amma sonda ümidverici proqnozlar verirsən. Azərbaycanca danış." 
+        },
+        { 
+            role: "user", 
+            content: `Adım ${name}. Sualım: ${question}. Mənim falıma bax.` 
+        }
+      ],
+      max_tokens: 150,
+    });
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const text = completion.choices[0].message.content;
 
     return res.status(200).json({ result: text });
 
   } catch (error) {
-    console.error("AI Xətası:", error);
-    return res.status(500).json({ error: "Falçıya əlaqə kəsildi..." });
+    console.error("OpenAI Xətası:", error);
+    return res.status(500).json({ error: error.message });
   }
 }
-
