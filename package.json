@@ -1,9 +1,8 @@
 {
   "name": "mistik-falci",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "dependencies": {
-    "@google/generative-ai": "^0.21.0"
+    "openai": "^4.0.0"
   }
-
 }
