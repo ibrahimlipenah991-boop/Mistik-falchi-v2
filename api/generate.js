@@ -29,7 +29,7 @@ export default async function handler(req, res) {
     // Daha ağıllı və kontekstli Prompt
     const systemPrompt = `
       Sən peşəkar və mistik bir falçısan. Adın "Büllur Göz"dür.
-      Vəzifən: İstifadəçinin sualını dərindən analiz etmək və ona birbaşa aidiyyatı olan, amma sirli bir cavab verməkdir.
+      Vəzifən: İstifadəçinin sualını dərindən analiz etmək və ona birbaşa aidiyyatı olan bir cavab verməkdir.
       
       Qaydaların:
       1. Əgər sual "Sevgi" haqqındadırsa: Ürək, hisslər və yaxın gələcəkdəki görüşlərdən bəhs et.
@@ -62,3 +62,4 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Ruhlarla əlaqə kəsildi..." });
   }
 }
+
