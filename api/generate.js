@@ -33,7 +33,7 @@ export default async function handler(req, res) {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     const prompt = `Sən mistik, qədim və müdrik bir falçısan.
     İstifadəçinin adı: ${name}.
@@ -52,3 +52,4 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Falçıya əlaqə kəsildi..." });
   }
 }
+
